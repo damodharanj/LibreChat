@@ -44,6 +44,16 @@ export default function Artifacts() {
     setTimeout(() => setIsRefreshing(false), 750);
   };
 
+  const handleSave = () => {
+    const element = document.createElement('a');
+    const file = new Blob([currentArtifact.content ?? ''], { type: 'text/html' });
+    element.href = URL.createObjectURL(file);
+    element.download = `${currentArtifact.title}.html`;
+    document.body.appendChild(element); // Required for this to work in FireFox
+    element.click();
+    document.body.removeChild(element);
+  };
+
   return (
     <Tabs.Root value={activeTab} onValueChange={setActiveTab} asChild>
       {/* Main Parent */}
@@ -108,6 +118,12 @@ export default function Artifacts() {
                 >
                   Code
                 </Tabs.Trigger>
+                <Tabs.Trigger
+                  value="save"
+                  className="border-0.5 flex items-center gap-1 rounded-full border-transparent py-1 pl-2.5 pr-2.5 text-xs font-medium text-text-secondary data-[state=active]:border-border-light data-[state=active]:bg-surface-primary-alt data-[state=active]:text-text-primary"
+                >
+                  Save
+                </Tabs.Trigger>
               </Tabs.List>
               <button
                 className="text-text-secondary"
@@ -148,6 +164,19 @@ export default function Artifacts() {
               artifact={currentArtifact}
               previewRef={previewRef as React.MutableRefObject<SandpackPreviewRef>}
             />
+          </Tabs.Content>
+          <Tabs.Content
+            value="save"
+            className={cn('flex-grow overflow-auto bg-white p-4')}
+          >
+            <div className="text-center text-text-primary">
+              <button
+                className="border-0.5 min-w-[4rem] whitespace-nowrap rounded-md border-border-medium bg-[radial-gradient(ellipse,_var(--tw-gradient-stops))] from-surface-active from-50% to-surface-active px-3 py-1 text-xs font-medium text-text-primary transition-colors hover:bg-surface-active hover:text-text-primary active:scale-[0.985] active:bg-surface-active"
+                onClick={handleSave}
+              >
+                Download as HTML
+              </button>
+            </div>
           </Tabs.Content>
           {/* Footer */}
           <div className="flex items-center justify-between border-t border-border-medium bg-surface-primary-alt p-2 text-sm text-text-secondary">
